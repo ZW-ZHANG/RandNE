@@ -28,6 +28,7 @@ RandNE_Update.p: update embeddings for dynamic networks
 GS.p: perform Gram–Schmidt process to obtain orthogonal projections
 ```
 ##### A Note on Hyper-parameters
+```
 We find empirically that our method is somewhat sensitive to hyper-parameters (adjacency matrix/transition matrix, order q and weights for different orders w). 
 A recommended way for tuning hyper-parameters is to use grid search on cross-validation sets, which should be efficient since order and weights only affect the last step of our algorithm (RandNE_Combine).
 The range for searching is suggested as follows: order is from 1 to 3 and weights can be searched by w_{i+1} = beta_i w_i where beta_i is from {0.01,0.1,1,10,100}.
@@ -36,7 +37,7 @@ The hyper-parameters used in our paper for BlogCatalog dataset is listed as a re
 Reconstruction: adjacency matrix, q = 1, weights = [1,0.1]
 Link Prediction: adjaecncy matrix, q = 2, weights = [1,1,0.01]
 Node Classification: transition matrix, q = 3, weights = [1,100,10000,100000]
-
+```
 ### Cite
 If you find this code useful, please cite our paper:
 ```
