@@ -8,24 +8,41 @@ from sklearn.preprocessing import normalize
 import RandNE
 from eval import Precision_Np, AUC
 
+dataset = 'blogcatalog'   # blogcatalog or youtube
+
+
 if __name__ == '__main__':
 
     print('---loading dataset---')
-    data = pd.read_csv('BlogCatalog.csv')      
-    data = np.array(data) - 1                       # change index from 0
-    N = np.max(np.max(data)) + 1
-    A = csr_matrix((np.ones(data.shape[0]), (data[:,0],data[:,1])), shape = (N,N))
-    A += A.T
-    
+    if dataset == 'blogcatalog':
+        data = pd.read_csv('BlogCatalog.csv')      
+        data = np.array(data) - 1                       # change index from 0
+        N = np.max(np.max(data)) + 1
+        A = csr_matrix((np.ones(data.shape[0]), (data[:,0],data[:,1])), shape = (N,N))
+        A += A.T
+    elif dataset == 'youtube':
+        data = pd.read_csv('release-youtube-links.txt', sep='\t')
+        data = np.array(data) - 1 
+        N = np.max(np.max(data)) + 1
+        A = csr_matrix((np.ones(data.shape[0]), (data[:,0],data[:,1])), shape = (N,N))
+        # make undirected
+        A += A.T
+        A = A - (A == 2)
+        # delete nodes without edges
+        temp_choose = np.squeeze(np.array(np.sum(A,axis=0) > 0))
+        A = A[temp_choose,:][:,temp_choose]
+    else:
+        raise NotImplementedError('Unsupported dataset')
+        
     # Common parameters
     d = 128
-    Ortho = 0
+    Ortho = False
     seed = 0
     
     print('---calculating embedding---')
     # embedding for adjacency matrix for reconstruction
-    q = 2
-    weights = [1,0.1,0.001]
+    q = 3
+    weights = [1,0.1,0.01,0.001]
     U_list = RandNE.Projection(A, q, d, Ortho, seed)
     U = RandNE.Combine(U_list, weights)
     print('---evaluating---')

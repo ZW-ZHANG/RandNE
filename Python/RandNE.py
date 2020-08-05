@@ -53,7 +53,6 @@ def Combine(U_list, weights):
     Outputs:
        U: final embedding vector
     '''
-    
     if not len(U_list) == len(weights):
         raise ValueError('Weight length not consistent')
     U = np.zeros(U_list[0].shape)
